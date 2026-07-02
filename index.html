@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Aplikasi Kasir</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+    }
+
+    /* HEADER */
+    header {
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 24px;
+    }
+
+    /* NAV */
+    nav {
+      text-align: center;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    nav button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    nav button:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    /* CONTENT */
+    .container {
+      padding: 20px;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .active {
+      display: block;
+    }
+
+    /* CARD */
+    .card {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      border-radius: 15px;
+      color: white;
+    }
+
+    /* FORM */
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button.aksi {
+      width: 100%;
+      padding: 10px;
+      background: #00c9a7;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button.aksi:hover {
+      background: #00b894;
+    }
+
+    /* TABLE */
+    table {
+      width: 100%;
+      margin-top: 15px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .total {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header> Aplikasi Kasir Modern</header>
+
+  <nav>
+    <button onclick="show('beranda')">Beranda</button>
+    <button onclick="show('transaksi')">Transaksi</button>
+    <button onclick="show('profil')">Profil</button>
+    <button onclick="show('login')">Login</button>
+  </nav>
+
+  <div class="container">
+
+    <!-- BERANDA -->
+    <div id="beranda" class="section active">
+      <div class="card">
+        <h2>Beranda</h2>
+        <p>Selamat datang di aplikasi kasir untuk tugas UAS Pemrograman Web.</p>
+      </div>
+    </div>
+
+    <!-- TRANSAKSI -->
+    <div id="transaksi" class="section">
+      <div class="card">
+        <h2>Transaksi</h2>
+
+        <input type="text" id="nama" placeholder="Nama Barang">
+        <input type="number" id="harga" placeholder="Harga">
+        <input type="number" id="jumlah" placeholder="Jumlah">
+
+        <button class="aksi" onclick="tambah()">Tambah</button>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Harga</th>
+              <th>Jumlah</th>
+              <th>Total</th>
+              <th>Hapus</th>
+            </tr>
+          </thead>
+          <tbody id="tabel"></tbody>
+        </table>
+
+        <div class="total" id="totalSemua">Total Semua: 0</div>
+      </div>
+    </div>
+
+    <!-- PROFIL -->
+    <div id="profil" class="section">
+      <div class="card">
+        <h2>Profil</h2>
+        <p>Nama: AHMAD FATHAN</p>
+        <p>NIM: 251011750185</p>
+        <p>Aplikasi ini dibuat untuk memenuhi tugas Pemrograman Web.</p>
+      </div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="login" class="section">
+      <div class="card">
+        <h2>Login</h2>
+
+        <input type="text" id="user" placeholder="Masukkan Username">
+        <input type="password" id="pass" placeholder="Masukkan Password">
+
+        <button class="aksi" onclick="login()">Masuk</button>
+
+        <p id="info"></p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+
+    let data = [];
+
+    /* NAVIGASI */
+    function show(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    /* TRANSAKSI */
+    function tambah() {
+      let nama = document.getElementById('nama').value;
+      let harga = document.getElementById('harga').value;
+      let jumlah = document.getElementById('jumlah').value;
+
+      if (nama == "" || harga == "" || jumlah == "") {
+        alert("Isi semua data!");
+        return;
+      }
+
+      data.push({ nama, harga, jumlah });
+      render();
+    }
+
+    function render() {
+      let tabel = document.getElementById('tabel');
+      tabel.innerHTML = "";
+      let totalSemua = 0;
+
+      data.forEach((item, index) => {
+        let total = item.harga * item.jumlah;
+        totalSemua += total;
+
+        let row = tabel.insertRow();
+        row.innerHTML = `
+      <td>${item.nama}</td>
+      <td>${item.harga}</td>
+      <td>${item.jumlah}</td>
+      <td>${total}</td>
+      <td><button onclick="hapus(${index})">🗑️</button></td>
+    `;
+      });
+
+      document.getElementById('totalSemua').innerText = "Total Semua: " + totalSemua;
+    }
+
+    function hapus(i) {
+      data.splice(i, 1);
+      render();
+    }
+
+    /* LOGIN BEBAS (SESUAI TUGAS TETAP ADA VALIDASI INPUT) */
+    function login() {
+      let user = document.getElementById('user').value.trim();
+      let pass = document.getElementById('pass').value.trim();
+
+      if (user === "" || pass === "") {
+        document.getElementById('info').innerHTML = "<span style='color:yellow'>Harap isi username & password</span>";
+      } else {
+        document.getElementById('info').innerHTML = "<span style='color:lightgreen'>Login berhasil 🎉</span>";
+        show('beranda');
+      }
+    }
+
+  </script>
+
+</body>
+
+</html>
